@@ -48,7 +48,7 @@ SBATCH_TIMELIMIT={timelimit}
 """
 
 COMMAND = """\
-timeout -s TERM $(($SBATCH_TIMELIMIT - 300)) flow-execute {container} {command} & WORKER_PIDS+=" $!"
+timeout -s TERM $(($SBATCH_TIMELIMIT - 300)) {command} & WORKER_PIDS+=" $!"
 """
 
 NO_RESUME_EPILOG = """\
@@ -231,7 +231,7 @@ def main(argv=None):
 
     parser = argparse.ArgumentParser(description="Submit commands with sbatch")
 
-    parser.add_argument('container', help='Singularity container to execute within the script')
+    #parser.add_argument('container', help='Singularity container to execute within the script')
 
     parser.add_argument('--root', help='Root directory for SBATCH configuration script file')
 
@@ -274,7 +274,7 @@ def main(argv=None):
         file_path = args.config
 
     print("Submitting {}".format(file_path))
-    print("With container {}".format(args.container))
+    #print("With container {}".format(args.container))
     print("With arguments {}".format(args.commandline))
 
     file_path = get_unique_file_numbered(file_path)
@@ -318,7 +318,7 @@ def generate_script(args, file_path):
     if args.prolog:
         prolog += '\n' + "\n".join(line for line in args.prolog.split("\n") if line) + '\n'
 
-    command = COMMAND.format(container=args.container, command=format_commandline(args.commandline))
+    command = COMMAND.format(command=format_commandline(args.commandline))
     if args.resume:
         epilog = EPILOG.format(file_path=file_path)
     else:
