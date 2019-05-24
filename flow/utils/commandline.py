@@ -23,10 +23,8 @@ def execute(commandline, print_only=False):
 
     proc = yield from create
 
-    create_task = getattr(asyncio, 'async')
-
-    tasks = [create_task(log_stream(proc.stdout)),
-             create_task(log_stream(proc.stderr)),
-             create_task(proc.wait())]
+    tasks = [asyncio.ensure_future(log_stream(proc.stdout)),
+             asyncio.ensure_future(log_stream(proc.stderr)),
+             asyncio.ensure_future(proc.wait())]
 
     yield from asyncio.wait(tasks)
